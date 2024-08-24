@@ -1,0 +1,26 @@
+#first{
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+}
+
+/* dummy.css */
+.card-title, .price-text, .description-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .card-title {
+    font-size: 1.25rem; /* Adjust font size if needed */
+    margin-bottom: 0.5rem; /* Adjust spacing if needed */
+  }
+  
+  .price-text,.description-text {
+    font-size: 1rem; /* Adjust font size if needed */
+    margin-bottom: 0.5rem; /* Adjust spacing if needed */
+  }
+  
+  
+
+  #property-box{
+    box-shadow: 20px 20px 60px rgb(49, 46, 46);
+  } 

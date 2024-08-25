@@ -11,6 +11,7 @@ import SignUp from './componet/sign-up';
 import SignIn from './componet/sign-in';
 import Contact from './componet/Contact';
 import UserProperty from './user-property';
+import Favorite from './componet/Faviourite';
 
 function App() {
   return <>
@@ -23,6 +24,7 @@ function App() {
   <Route path="/AddProperty" element={<AddProperty />} />
   <Route path='/contact' element={<Contact/>}/>
   <Route path='/user-property' element={<UserProperty/>}/>
+  <Route path='/favorite' element={<Favorite/>}/>
   </Routes>
   <Pages/>
 

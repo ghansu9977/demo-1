@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './dummy.css';
 
 function DummyProperty() {
@@ -12,7 +12,6 @@ function DummyProperty() {
     // Fetch properties data when component mounts
     axios.get('http://localhost:3000/properties/viewProperties')
       .then(result => {
-        console.log(result.data);
         setProperties(result.data);
       })
       .catch(err => {
@@ -22,6 +21,34 @@ function DummyProperty() {
 
   const addContact = (agentId) => {
     navigate('/contact', { state: { agentId } });
+  };
+
+  const markAsFavorite = async (propertyId) => {
+    try {
+      const token = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+      if (!token) {
+        alert('You need to be logged in to mark a property as favorite.');
+        navigate('/login'); // Optionally navigate to login if not authenticated
+        return;
+      }
+
+      const response = await axios.post(
+        `http://localhost:3000/properties/favorite/${propertyId}`,
+        {},
+        {
+          headers: {
+            'userId': token 
+          }
+        }
+      );
+      
+      if (response.status === 200) {
+        alert('Property added to favorites!');
+      }
+    } catch (error) {
+      console.error('Error marking property as favorite:', error);
+      alert('Failed to mark property as favorite. Please try again.');
+    }
   };
 
   return (
@@ -35,22 +62,26 @@ function DummyProperty() {
         ) : (
           properties.map(property => (
             <div className="col-md-4 mb-4" key={property._id}>
-              <div className="card property-card">
+              <div className="card shadow-sm border-light">
                 <img
                   src={property.images.split(',')[0]} // Display the first image
                   className="card-img-top"
                   alt={property.address || 'Property Image'}
+                  style={{ objectFit: 'cover', height: '200px' }}
                 />
                 <div className="card-body">
                   <h5 className="card-title">{property.address}</h5>
                   <p className="card-text price-text">Price: Rs. {property.price}</p>
-                  <p className="card-text description">
-                    <strong>Description:</strong> {property.description}
+                  <p className="card-text">
+                    <strong>Description:</strong> {property.description.length > 200
+                      ? `${property.description.slice(0, 200)}...`
+                      : property.description
+                    }
                   </p>
                 </div>
-                <div className="card-footer d-flex justify-content-between align-items-center">
+                <div className="card-footer d-flex justify-content-between">
                   <button className="btn btn-primary" onClick={() => addContact(property._id)}>Contact</button>
-                  <button className="btn btn-secondary">Add to Favorite</button>
+                  <button className="btn btn-secondary" onClick={() => markAsFavorite(property._id)}>Add to Favorite</button>
                 </div>
               </div>
             </div>

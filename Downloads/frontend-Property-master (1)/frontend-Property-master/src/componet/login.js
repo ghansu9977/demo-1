@@ -14,6 +14,8 @@ const AuthForm = () => {
 
   return (
     <div className="container">
+    <h1>bask</h1>
+
       <div className="forms-container">
         <div className="signin-signup">
           {isSignIn ? (

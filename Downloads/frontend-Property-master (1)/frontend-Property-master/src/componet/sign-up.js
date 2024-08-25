@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Signup.css'
 export default function SignUp() {
     const [name, setName] = useState('');
@@ -13,6 +13,8 @@ export default function SignUp() {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
     };
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -56,15 +58,14 @@ export default function SignUp() {
 
         axios.post('http://localhost:3000/user/register', { name, email, password })
             .then(response => {
+                console.log('User created:', response.data.token);
+                localStorage.setItem('userId', response.data.token);
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
                     text: 'Account created successfully!',
                 });
-                console.log(response)
-                console.log('User created:', response.data);
-                localStorage.setItem('userId', response.data.user._id);
-
+                navigate("/")
             })
             .catch(error => {
                 Swal.fire({

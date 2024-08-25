@@ -52,8 +52,8 @@ export default function SignIn() {
                     title: 'Success',
                     text: 'Account created successfully!',
                 });
-                localStorage.setItem("user",JSON.stringify(response.data.user));
-                console.log('User created:', response.data);
+                console.log('User created:', response.data.token);
+                localStorage.setItem('userId', response.data.token);
                 navigate("/")
             })
             .catch(error => {
@@ -95,7 +95,7 @@ export default function SignIn() {
                     <button className="form-btn">Login account</button>
                 </form>
                 <p className="sign-up-label">
-                    Do not have account<span className="sign-up-link"><Link to="/sign-up">
+                    Do not have account<span className="sign-up-link"><Link to="/register">
                     Sign up</Link> </span>
                 </p>
             </div>

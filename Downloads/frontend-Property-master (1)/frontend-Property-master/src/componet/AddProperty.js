@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
 
 function AddProperty() {
   const [address, setAddress] = useState('');
@@ -9,56 +10,76 @@ function AddProperty() {
   const [description, setDescription] = useState('');
   const [images, setImages] = useState('');
   const [contactInfo, setContactInfo] = useState('');
+  const [token, setToken] = useState(null); // Token state
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve token from sessionStorage
+    const storedToken = localStorage.getItem('userId');
+    if (!storedToken) {
+      // Redirect to login if user is not authenticated
+      navigate('/login');
+    } else {
+      setToken(storedToken);
+    }
+  }, [navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    const token = sessionStorage.getItem('token');
-    let userId = localStorage.getItem('userId'); // Assuming you store user ID in sessionStorage
+
+    if (!token) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'User is not authenticated. Please log in.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         'http://localhost:3000/properties/add-property',
         {
           address,
           price,
           description,
           images, // Keep images as a single string
-          contactInfo,
-          user: userId // Include the user ID
+          contactInfo
+        },
+        {
+          headers: {
+            'userId': token // Include the token in the 'userId' header
+          }
         }
-      ).then(result=>{
-        Swal.fire({
-          title: 'Success!',
-          text: 'Property added successfully!',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-        setAddress('');
-        setPrice('');
-        setDescription('');
-        setImages('');
-        setContactInfo('');
-
-      }).catch(err=>{
-        Swal.fire({
-          title: 'Error!',
-          text: 'Failed to add property. Please try again.',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+      );
+      Swal.fire({
+        title: 'Success!',
+        text: 'Property added successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK'
       });
       // Reset form fields after successful submission
+      setAddress('');
+      setPrice('');
+      setDescription('');
+      setImages('');
+      setContactInfo('');
     } catch (error) {
-
+      Swal.fire({
+        title: 'Error!',
+        text: error.response?.data?.msg || 'Failed to add property. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
       console.error('There was an error adding the property!', error);
     }
   };
 
   return (
     <>
-      <Header/>
-      <div className="container border mb-3 p-4" style={{marginTop:'100px'}}>
+      <Header />
+      <div className="container border mb-3 p-4" style={{ marginTop: '100px' }}>
         <h2>Add Property</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
